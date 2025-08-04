@@ -28,13 +28,13 @@
 #define PWM_FREQ 5000     // 5kHz PWM frequency
 #define PWM_RESOLUTION 8  // 8-bit resolution (0-255)
 
-const int SAMPLE_WINDOW_SIZE = 10;  // number of samples to average for smoothing raw readings
-
+const int SAMPLE_WINDOW_SIZE = 8;    // number of samples to average for smoothing raw readings
+const int HYSTERESIS_THRESHOLD = 5;  // the minimum change in reading that must occur to update PWM
 RunningAverage potFilter(SAMPLE_WINDOW_SIZE);
+int lastPwmValue = 0;
 
 void setup() {
   Serial.begin(115200);
-
   pinMode(POT_PIN, INPUT);
 
   bool success = ledcAttach(PWM_OUT_PIN, PWM_FREQ, PWM_RESOLUTION);
@@ -48,7 +48,7 @@ void setup() {
   for (int i = 0; i < SAMPLE_WINDOW_SIZE; i++) {
     int initVal = analogRead(POT_PIN);
     potFilter.addValue(initVal);
-    delay(10);
+    delay(5);
   }
 
   Serial.println("ESP32 ready, reading pot value...");
@@ -67,15 +67,20 @@ void loop() {
   // map the smoothed value to PWM range
   int pwmVal = map(avgPotVal, 0, 4095, 0, 255);  // scale to 0-255 for 8-bit PWM
 
-  ledcWrite(PWM_OUT_PIN, pwmVal);
 
-  Serial.print("Raw pot: ");
-  Serial.print(rawPotVal);
-  Serial.print(" | Avg pot: ");
-  Serial.print(avgPotVal, 1);  // Show 1 decimal place
-  Serial.print(" | PWM Output: ");
-  Serial.print(pwmVal);
-  Serial.println();
+  // only update PWM if change is significant (hysteresis)
+  if (abs(pwmVal - lastPwmValue) >= HYSTERESIS_THRESHOLD) {
+    ledcWrite(PWM_OUT_PIN, pwmVal);
+    lastPwmValue = pwmVal;
+    Serial.print("Raw pot: ");
+    Serial.print(rawPotVal);
+    Serial.print(" | Avg pot: ");
+    Serial.print(avgPotVal, 1);  // Show 1 decimal place
+    Serial.print(" | PWM Output: ");
+    Serial.print(pwmVal);
+    Serial.println();
+  }
 
-  delay(50);
+
+  delay(25);
 }
