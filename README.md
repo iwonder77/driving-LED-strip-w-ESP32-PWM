@@ -58,4 +58,8 @@ if (abs(pwmVal - lastPwmVal) >= HYSTERESIS_THRESHOLD) {
 }
 ```
 
+## QuinLED Dig Uno Code 
 
+### Notable snippets:
+
+### 1.
