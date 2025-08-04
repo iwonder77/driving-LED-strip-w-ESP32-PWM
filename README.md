@@ -25,7 +25,7 @@ Connections
 
 ### Notable snippets:
 
-1. Running Average Filter
+### 1. Running Average Filter
 
 Using the [Running Average](https://github.com/RobTillaart/RunningAverage) arduino library, we are able to leverage a circular buffer to smooth out raw ADC readings and eliminate noise. 
 
@@ -43,7 +43,7 @@ for(int i = 0; i < SAMPLE_WINDOW_SIZE; i++) {
 }
 ```
 
-2. Hysteresis Threshold
+### 2. Hysteresis Threshold
 
 Only updates PWM output when changes to present output exceed a minimum threshold, which helps prevent jitter
 
