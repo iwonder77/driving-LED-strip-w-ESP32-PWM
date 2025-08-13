@@ -23,7 +23,7 @@
 #include <RunningAverage.h>
 
 #define POT_PIN 26
-#define PWM_OUT_PIN 27
+#define PWM_OUT_PIN 25
 
 #define PWM_FREQ 5000     // 5kHz PWM frequency
 #define PWM_RESOLUTION 8  // 8-bit resolution (0-255)
